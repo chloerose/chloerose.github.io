@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Environmental Study Search Demo (Postal Code & Kilometers)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #search-container {
+      margin-bottom: 20px;
+    }
+    label {
+      display: inline-block;
+      width: 100px;
+      margin-right: 10px;
+    }
+    input, select {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    #results {
+      margin-top: 20px;
+    }
+    .study-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .study-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Environmental Study Search Demo</h1>
+  <div id="search-container">
+    <label for="postalCode">Postal Code:</label>
+    <input type="text" id="postalCode" placeholder="Enter Postal Code" />
+
+    <label for="radius">Radius:</label>
+    <select id="radius">
+      <option value="15">15 km</option>
+      <option value="40">40 km</option>
+      <option value="80">80 km</option>
+    </select>
+
+    <button onclick="searchStudies()">Search</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    // Fake study data for demonstration.
+    // In a real application, you would fetch this data from an API or database.
+    const fakeStudies = [
+      {
+        title: "Monitoring Water for Pesticides",
+        postalCode: "h4x1p4",
+        type: "Water & Pesticides",
+        date: "2022-08-10",
+        summary: `
+          Health Canada's Pest Management Regulatory Agency conducted a 2-year pilot program to monitor water for pesticides, from April 2022 to March 2024. We collaborated with Environment and Climate Change Canada (ECCC) and Agriculture and Agri-Food Canada (AAFC). 
+          For more details, visit 
+          <a href="https://health-infobase.canada.ca/pesticides/water-monitoring/" 
+             target="_blank" rel="noopener noreferrer">this Health Infobase page</a>.
+        `
+      },
+      {
+        title: "Water Quality in Canadian Rivers",
+        postalCode: "h4x1p4",
+        type: "Water Quality",
+        date: "2023-01-15",
+        summary: `
+          For the 2020 to 2022 period, water quality in Canadian rivers was evaluated at 163 sites across southern Canada, rated fair to excellent at 86% of the monitored sites. 
+          For more details, visit 
+          <a href="https://www.canada.ca/en/environment-climate-change/services/environmental-indicators/water-quality-canadian-rivers.html"
+             target="_blank" rel="noopener noreferrer">this Government of Canada page</a>.
+        `
+      },
+      {
+        title: "Wildlife Impact Survey",
+        postalCode: "23456",
+        type: "Wildlife",
+        date: "2021-05-27",
+        summary: "Observations of migratory birds and habitat changes."
+      },
+      {
+        title: "Soil Erosion Study",
+        postalCode: "34567",
+        type: "Soil & Erosion",
+        date: "2021-11-04",
+        summary: "Analysis of topsoil loss rates and causes in the region."
+      },
+      {
+        title: "River Cleanup Initiative Results",
+        postalCode: "45678",
+        type: "Water Quality",
+        date: "2022-12-01",
+        summary: "Volunteer event data and water turbidity improvements."
+      }
+    ];
+
+    /**
+     * searchStudies()
+     * Grabs user input (postal code, radius), filters the fake data,
+     * and displays results.
+     */
+    function searchStudies() {
+      const userPostal = document.getElementById("postalCode").value.trim();
+      const userRadius = document.getElementById("radius").value;
+
+      // In a real scenario, you'd:
+      // 1. Convert userPostal to lat/lng via a geocoding service.
+      // 2. Calculate distances from each study's location to userPostal's location.
+      // 3. Compare those distances with userRadius.
+
+      // For this demo, we'll just "fake" the logic:
+      // - If userPostal matches the study's postalCode exactly,
+      //   we pretend it's within the user-selected radius.
+      const matchedStudies = fakeStudies.filter(study => {
+        return study.postalCode === userPostal;
+      });
+
+      displayResults(matchedStudies, userPostal, userRadius);
+    }
+
+    /**
+     * displayResults(studies, postal, radius)
+     * Renders the list of matched studies on the page.
+     */
+    function displayResults(studies, postal, radius) {
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = ""; // Clear previous results
+
+      if (!postal) {
+        resultsDiv.innerHTML = "<p>Please enter a postal code to search.</p>";
+        return;
+      }
+
+      if (studies.length === 0) {
+        resultsDiv.innerHTML = `<p>No studies found within ${radius} km of postal code ${postal}.</p>`;
+        return;
+      }
+
+      resultsDiv.innerHTML = `<h2>Found ${studies.length} study(ies) within ${radius} km of postal code ${postal}:</h2>`;
+
+      studies.forEach(study => {
+        const studyDiv = document.createElement("div");
+        studyDiv.className = "study-item";
+
+        studyDiv.innerHTML = `
+          <div class="study-title">${study.title}</div>
+          <div><strong>Type:</strong> ${study.type}</div>
+          <div><strong>Date:</strong> ${study.date}</div>
+          <div><strong>Summary:</strong> ${study.summary}</div>
+          <div><strong>Postal Code:</strong> ${study.postalCode}</div>
+        `;
+        resultsDiv.appendChild(studyDiv);
+      });
+    // Add a map of Canada with a pin on Montreal
+      resultsDiv.innerHTML += `
+        <div class="map-container">
+          <h3>Searched Area:</h3>
+          <iframe
+            width="600"
+            height="450"
+            style="border:0;"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d308688.3175381458!2d-74.04221080479093!3d45.55918750997633!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sca!4v1736970750213!5m2!1sen!2sca"
+          ></iframe>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
